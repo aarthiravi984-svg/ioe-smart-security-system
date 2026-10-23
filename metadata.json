@@ -1,0 +1,6 @@
+{
+  "name": "IoE Smart Security & Intelligent Monitoring System",
+  "description": "Internet of Everything (IoE) smart security dashboard integrating Arduino sensors, Web Serial API, real-time camera motion detection, intelligent multi-sensor rule processing, and EmailJS alerts.",
+  "requestFramePermissions": ["camera"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

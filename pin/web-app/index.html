@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IoE Smart Security and Intelligent Monitoring System</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- EmailJS SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+</head>
+<body>
+
+  <!-- Top Navigation / Status Header -->
+  <header class="dashboard-header">
+    <div class="header-left">
+      <h1>🛡️ IoE Smart Security & Intelligent Monitoring</h1>
+      <p>College Level Internet of Everything (IoE) System • Things, Data, People & Processes</p>
+    </div>
+    <div style="display: flex; gap: 10px; align-items: center;">
+      <button id="btnToggleMonitoring" class="btn btn-success">Disarm System</button>
+      <button id="btnTriggerAlarm" class="btn btn-danger">🚨 Panic Siren</button>
+      <button id="btnResetAlarm" class="btn btn-outline">Clear Alarm</button>
+    </div>
+  </header>
+
+  <!-- Metric Badges Row -->
+  <section class="status-grid">
+    <div class="metric-card">
+      <div class="metric-title">System Guard State</div>
+      <div id="statusSystem" class="badge badge-green">ARMED & MONITORING</div>
+      <div class="metric-subtitle">Autonomous event correlation active</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-title">Arduino Uno (Serial)</div>
+      <div id="statusArduino" class="badge badge-red">DISCONNECTED</div>
+      <div class="metric-subtitle">Web Serial API @ 9600 baud</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-title">Webcam + CV Motion</div>
+      <div id="statusCamera" class="badge badge-amber">OFFLINE</div>
+      <div class="metric-subtitle">Differential frame computer vision</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-title">EmailJS Notification</div>
+      <div id="statusEmail" class="badge badge-amber">NOT CONFIGURED</div>
+      <div class="metric-subtitle">Real-time intrusion delivery</div>
+    </div>
+  </section>
+
+  <!-- Sensor Telemetry Cards -->
+  <section class="status-grid">
+    <div class="metric-card">
+      <div class="metric-title">Temperature (DHT Sensor)</div>
+      <div class="metric-value" id="valTemp">--.- °C</div>
+      <div class="metric-subtitle">Threshold alert at &gt; 40.0°C</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-title">Relative Humidity</div>
+      <div class="metric-value" id="valHumidity">--.- %</div>
+      <div class="metric-subtitle">Ambient environmental telemetry</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-title">PIR Motion Sensor</div>
+      <div><span id="valMotion" class="badge badge-green">CLEAR</span></div>
+      <div class="metric-subtitle">Digital Pin 2 (HC-SR501)</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-title">Ultrasonic Range</div>
+      <div class="metric-value" id="valDistance">---.- cm</div>
+      <div class="metric-subtitle">Perimeter breach at &lt; 30cm</div>
+    </div>
+  </section>
+
+  <!-- Main Grid: Camera Feed & Configuration -->
+  <div class="main-grid">
+    <!-- Camera Surveillance Card -->
+    <div class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">📹 Video Surveillance & Computer Vision</h2>
+        <div style="display: flex; gap: 8px;">
+          <button id="btnStartCamera" class="btn btn-outline">Start Camera</button>
+          <button id="btnConnectSerial" class="btn btn-primary">Connect Arduino</button>
+        </div>
+      </div>
+      <div class="video-container">
+        <div class="camera-overlay">
+          <span class="badge badge-blue">160x120 CV Grid</span>
+          <span class="badge badge-green">Live Feed</span>
+        </div>
+        <video id="webcamVideo" autoplay playsinline muted></video>
+        <canvas id="cvCanvas" width="160" height="120"></canvas>
+      </div>
+      <div style="margin-top: 12px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 0.85rem; color: var(--text-muted);">
+          Algorithm: Luminance frame differencing with pixel centroid tracking
+        </span>
+        <button id="btnSimulateEvent" class="btn btn-outline" style="font-size: 0.8rem;">
+          ⚡ Inject Test Event
+        </button>
+      </div>
+    </div>
+
+    <!-- Email & Security Rules Config -->
+    <div class="panel">
+      <div class="panel-header">
+        <h2 class="panel-title">⚙️ EmailJS Alert Notification Setup</h2>
+      </div>
+      <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 14px;">
+        Configure browser-based email alerts using your free EmailJS account credentials. Credentials are kept in browser localStorage.
+      </p>
+      
+      <div class="form-group">
+        <label for="emailServiceId">Service ID (e.g. service_xxxxxx)</label>
+        <input type="text" id="emailServiceId" class="form-input" placeholder="service_xyz">
+      </div>
+      <div class="form-group">
+        <label for="emailTemplateId">Template ID (e.g. template_xxxxxx)</label>
+        <input type="text" id="emailTemplateId" class="form-input" placeholder="template_abc">
+      </div>
+      <div class="form-group">
+        <label for="emailPublicKey">Public Key (User ID)</label>
+        <input type="text" id="emailPublicKey" class="form-input" placeholder="publicKey_123">
+      </div>
+      <div class="form-group">
+        <label for="emailRecipient">Recipient Security Officer Email</label>
+        <input type="email" id="emailRecipient" class="form-input" placeholder="security@college.edu">
+      </div>
+
+      <div style="display: flex; gap: 10px; margin-top: 16px;">
+        <button id="btnSaveEmail" class="btn btn-primary" style="flex: 1;">Save Settings</button>
+        <button id="btnTestEmail" class="btn btn-outline" style="flex: 1;">Send Test Email</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Real-Time Event Audit History -->
+  <div class="panel">
+    <div class="panel-header">
+      <div>
+        <h2 class="panel-title">📋 IoE Security Incident & Audit Log</h2>
+        <span style="font-size: 0.85rem; color: var(--text-muted);">
+          Records all hardware telemetry, CV detections, and operator actions
+        </span>
+      </div>
+      <button id="btnExportCsv" class="btn btn-outline">📥 Export Audit CSV</button>
+    </div>
+
+    <div class="events-table-wrapper">
+      <table class="events-table">
+        <thead>
+          <tr>
+            <th>Event ID</th>
+            <th>Time</th>
+            <th>Type</th>
+            <th>Description</th>
+            <th>Data Source</th>
+          </tr>
+        </thead>
+        <tbody id="eventsTableBody">
+          <!-- Populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="serial.js"></script>
+  <script src="camera.js"></script>
+  <script src="email.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
